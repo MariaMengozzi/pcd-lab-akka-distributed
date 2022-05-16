@@ -25,6 +25,10 @@ object AntsRender:
       Behaviors.withTimers { timers =>
         timers.startTimerAtFixedRate(Flush, 33 milliseconds)
         var toRender: Map[ActorRef[_], (Int, Int)] = Map.empty
+        /*
+        dico al receptionist che da ora in poi gli altri possono prendermi, quindi mi sto registrando al servizio e 
+        voglio che il riferimento sia me stesso
+        */
         ctx.system.receptionist ! Receptionist.Register(Service, ctx.self)
         Behaviors.receiveMessage {
           case Render(x, y, id) =>

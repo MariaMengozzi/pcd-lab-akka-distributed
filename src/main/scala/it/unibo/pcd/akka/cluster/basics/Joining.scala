@@ -11,14 +11,14 @@ import it.unibo.pcd.akka.cluster.*
 /** programmatic joining using another cluster ref */
 @main def join(): Unit =
   val first = startup("base-cluster-no-seed", 3521)(Behaviors.empty)
-  val clusterRefA = Cluster(first)
+  val clusterRefA = Cluster(first) //decoro i sistemi con le API del cluster
   val second = startup("base-cluster-no-seed", 3522)(Behaviors.empty)
   val clusterRefB = Cluster(second)
-  clusterRefA.manager ! Join(clusterRefA.selfMember.address)
+  clusterRefA.manager ! Join(clusterRefA.selfMember.address) //mando al cluster il msg dove gli dico che voglio partecipare
   Thread.sleep(5000)
   clusterRefB.manager ! Join(clusterRefA.selfMember.address) // same cluster!!
   Thread.sleep(5000)
-  clusterRefA.manager ! Leave(clusterRefB.selfMember.address)
+  clusterRefA.manager ! Leave(clusterRefB.selfMember.address) //il nodo esce dal cluster  
   Thread.sleep(5000)
   println(clusterRefA.state) // I can read the cluster state
 

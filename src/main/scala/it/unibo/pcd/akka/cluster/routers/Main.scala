@@ -20,7 +20,7 @@ object WorkerRouter:
   def apply(workers: Int): Behavior[Unit] = Behaviors.setup { ctx =>
     1 to workers map { i => ctx.spawn(Worker(), i.toString) } foreach { ref =>
       ctx.system.receptionist ! Receptionist.Register(workerService, ref)
-    }
+    } //ogni attore deve essere registrato, questo è il meccanismo usato per creare i routre
     Behaviors.empty
   }
 

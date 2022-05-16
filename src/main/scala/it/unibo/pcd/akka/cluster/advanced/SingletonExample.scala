@@ -55,3 +55,4 @@ object RenderUsingSingleton:
 @main def usingSingletonDirectly(): Unit =
   startup(port = seeds.head)(RenderUsingSingleton(100, 100))
   startup(port = seeds.last)(RenderUsingSingleton(200, 200))
+  //anche se lo faccio 2 volte, vedò solo 1 GUI proprio perchè è un singleton

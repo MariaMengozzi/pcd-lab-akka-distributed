@@ -13,7 +13,8 @@ object ShowEvents:
     val cluster = Cluster(ctx.system) // get the reference of the cluster in which the actor belongs
     // receive all the event of the cluster in which the actor belongs, (via pub sub pattern)
     classOf[MemberEvent] :: classOf[LeaderChanged] :: Nil foreach (event => // I can Subscribe to multiple events
-      cluster.subscriptions ! Subscribe(ctx.self, event)
+      cluster.subscriptions ! Subscribe(ctx.self, event) //attore che da la possibilità di sottoscriversi agli eventi del sistema.
+                                                        // l'attore è come se fosse distribuito su tutti i nodi del sistema
     )
     Behaviors.receiveMessage { msg =>
       ctx.log.info(s"EVENT LISTENER: ${msg.toString}")

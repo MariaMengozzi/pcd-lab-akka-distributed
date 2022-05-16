@@ -13,10 +13,17 @@ import scala.util.Random
   * frontend interested in ant movements.
   */
 object Ant:
+  /*sealed -> in un altro file non posso estendere Command, equivale a
+  * Enum Command:
+      case Stop, Move
 
+  Sealed provides exhaustive checking for our application. Exhaustive checking allows to check that all members of a
+  * sealed trait must be declared in the same file as of the source file. That means that all the possible known members
+  * of a trait that must be included are known by the compiler in advance
+  * */
   sealed trait Command extends Message // Enum needs an ad-hoc serializers...
-  case object Stop extends Command
-  private case object Move extends Command // and ADT enable also private messages
+  case object Stop extends Command // api pubblica
+  private case object Move extends Command // and ADT enable also private messages //comporamento interno che non mostro all'esterno. è un'interfaccia privata
 
   def apply(
       position: (Int, Int),
@@ -24,6 +31,7 @@ object Ant:
       frontends: List[ActorRef[AntsRender.Render]] = List.empty
   )(using random: Random): Behavior[Command | Receptionist.Listing] =
     Behaviors.setup[Command | Receptionist.Listing] { ctx =>
+      /*dico che voglio registrarmi a tutti quelli che sono registrati come service*/
       ctx.system.receptionist ! Receptionist.Subscribe(AntsRender.Service, ctx.self) // register to new frontend
       Behaviors.withTimers { timers =>
         timers.startTimerAtFixedRate(Move, period)
@@ -38,6 +46,7 @@ object Ant:
       frontends: List[ActorRef[AntsRender.Render]] = List.empty
   )(using random: Random): Behavior[Command | Receptionist.Listing] = Behaviors.receiveMessage {
     case msg: Receptionist.Listing =>
+      //contiene tutti i servizi che si sono registrati
       ctx.log.info(s"New frontend! $msg")
       val services = msg.serviceInstances(AntsRender.Service).toList
       if (services == frontends)

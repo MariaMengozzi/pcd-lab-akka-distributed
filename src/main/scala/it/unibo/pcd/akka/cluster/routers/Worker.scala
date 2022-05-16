@@ -17,13 +17,13 @@ object Worker:
   case class Result(number: Int, result: Long) extends Message
   def apply(): Behavior[Command] = Behaviors.setup { ctx =>
     Behaviors.receiveMessage { case EvalFactorial(n, resultSendTo) =>
-      ctx.log.info(s"Eval prime of $n, I am ${ctx.self.path}")
-      resultSendTo ! Result(n, prime(n))
+      ctx.log.info(s"Eval factorial of $n, I am ${ctx.self.path}")
+      resultSendTo ! Result(n, factorial(n))
       Behaviors.same
     }
   }
 
-  private def prime(n: Int): Long = if (n == 0)
+  private def factorial(n: Int): Long = if (n == 0)
     1
   else
-    n * prime(n - 1)
+    n * factorial(n - 1)
